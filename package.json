@@ -3,14 +3,20 @@
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
+    "engines": {
+        "node": "12.16.1"
+    },
     "scripts": {
         "start": "node server/server.js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
-    "author": "",
+    "author": "Gines Lopez a traves de un curso de Udemy",
     "license": "ISC",
     "dependencies": {
+        "bcrypt": "^4.0.0",
         "body-parser": "^1.19.0",
-        "express": "^4.17.1"
+        "express": "^4.17.1",
+        "mongoose": "^5.9.2",
+        "underscore": "^1.9.2"
     }
 }
