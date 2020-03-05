@@ -9,8 +9,14 @@ const User = require('../models/user');
 const app = express();
 
 
-app.post('/prue', (req, res) => {
-    return 'http ok ';
+
+app.get('/prue', (req, res) => {
+
+    return res.status(400).json({
+        ok: true,
+        men: 'funciona'
+
+    });
 });
 
 
@@ -53,10 +59,7 @@ app.post('/login', (req, res) => {
                 err: 'Contraseña incorrecta'
             });
         }
-
-
     });
-
 
 
 
