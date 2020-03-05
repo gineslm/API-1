@@ -8,12 +8,12 @@ const User = require('../models/user');
 
 const app = express();
 
-
+const { verificaToken, verificaAdmin_Role } = require('../middleware/auth');
 
 
 //////////////////////////
 ///////// GET ////////////
-app.get('/user', function(req, res) {
+app.get('/user', verificaToken, function(req, res) {
 
     let inicio = req.query.inicio || 0;
     let fin = req.query.fin || 5;
@@ -36,6 +36,7 @@ app.get('/user', function(req, res) {
 
                 res.json({
                     ok: true,
+                    myUser: req.myUser,
                     users,
                     cuantos: conteo
                 });
@@ -48,7 +49,7 @@ app.get('/user', function(req, res) {
 
 ////////////////////////////
 /////// POST //////////////
-app.post('/user', function(req, res) {
+app.post('/user', [verificaToken, verificaAdmin_Role], function(req, res) {
 
     let body = req.body;
 
@@ -58,6 +59,7 @@ app.post('/user', function(req, res) {
         role: body.role || 'USER_ROLE',
         img: body.img || null,
         estado: body.estado || true,
+        google: body.google || false,
         password: bcrypt.hashSync(body.password, 10),
     });
 
@@ -76,7 +78,8 @@ app.post('/user', function(req, res) {
 
         res.json({
             ok: true,
-            user: userDB
+            myUser: req.myUser,
+            newUser: userDB
         });
 
     });
@@ -86,7 +89,7 @@ app.post('/user', function(req, res) {
 
 ////////////////////
 /////// PUT ////////
-app.put('/user/:id', function(req, res) {
+app.put('/user/:id', [verificaToken, verificaAdmin_Role], function(req, res) {
 
     let id = req.params.id;
     let body = _.pick(req.body, ['name', 'email', 'img', 'estado']);
@@ -103,9 +106,24 @@ app.put('/user/:id', function(req, res) {
             });
         }
 
+        if (!userDB) {
+            return res.status(400).json({
+                ok: false,
+                err: 'no existe usuario con ese ID'
+            });
+        }
+
+
+
         res.json({
             ok: true,
-            user: userDB
+            myUser: req.myUser, // este es el usuario logeado
+            userUpdated: userDB // datos del usuario modificado
+
+            // TO-DO
+            // actualmente hay un problema, si el usuario logeado modifica sus datos
+            // la informacion de myUser no se actualiza porque bebe de la informacion del usuario 
+            // almacenada en el token
 
         });
 
@@ -116,9 +134,9 @@ app.put('/user/:id', function(req, res) {
 
 
 /////////////////////
-////// DELETE ///////
+////// DELETE KILL ///////
 
-app.delete('/user/kill/:id', function(req, res) {
+app.delete('/user/kill/:id', [verificaToken, verificaAdmin_Role], function(req, res) {
 
     let id = req.params.id;
 
@@ -144,6 +162,7 @@ app.delete('/user/kill/:id', function(req, res) {
         } else {
             res.json({
                 ok: true,
+                myUser: req.myUser,
                 'userDelete': userDelete
             });
         }
@@ -157,7 +176,7 @@ app.delete('/user/kill/:id', function(req, res) {
 ////////////////////
 /////// DELETE ////////
 
-app.delete('/user/:id', function(req, res) {
+app.delete('/user/:id', [verificaToken, verificaAdmin_Role], function(req, res) {
 
     let id = req.params.id;
     let body = _.pick(req.body, ['estado']);
@@ -187,8 +206,9 @@ app.delete('/user/:id', function(req, res) {
 
         res.json({
             ok: true,
+            myUser: req.myUser,
             changeTo: req.body.estado,
-            user: userDB
+            userChanged: userDB
         });
 
 
