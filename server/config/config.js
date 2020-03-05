@@ -19,7 +19,7 @@ let urlDB;
 if (process.env.NODE_ENV === 'dev') {
     urlDB = 'mongodb://localhost:27017/myData';
 } else {
-    urlDB = 'mongodb+srv://naohill:HeAzU0SkCWyFY8bX@primercrub-tmpxd.mongodb.net/delsaltres';
+    urlDB = 'mongodb+srv://<user>:<password>@primercrub-tmpxd.mongodb.net/delsaltres';
 }
 process.env.URLDB = urlDB;
 

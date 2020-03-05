@@ -9,6 +9,11 @@ const User = require('../models/user');
 const app = express();
 
 
+app.post('/prue', (req, res) => {
+    return 'http ok ';
+});
+
+
 app.post('/login', (req, res) => {
 
 
