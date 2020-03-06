@@ -10,15 +10,6 @@ const app = express();
 
 
 
-app.get('/prue', (req, res) => {
-
-    return res.status(400).json({
-        ok: true,
-        men: 'funciona'
-
-    });
-});
-
 
 app.post('/login', (req, res) => {
 
@@ -47,7 +38,7 @@ app.post('/login', (req, res) => {
                 myUser: userDB
             }, process.env.SEED_TOKEN, { expiresIn: process.env.CADUCIDAD_TOKEN });
 
-            return res.status(400).json({
+            return res.status(200).json({
                 ok: true,
                 user: userDB,
                 token
