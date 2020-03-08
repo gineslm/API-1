@@ -16,11 +16,11 @@ const { verificaToken, verificaAdmin_Role } = require('../middleware/auth');
 app.get('/user', verificaToken, function(req, res) {
 
     let inicio = req.query.inicio || 0;
-    let fin = req.query.fin || 5;
+    let fin = req.query.fin || 1000;
     inicio = Number(inicio);
     fin = Number(fin);
 
-    User.find({ estado: true }, 'name email estado img') ///  objj. especifican condiciones ei. activos , segundo parametro string nombre los campos q se muestran
+    User.find({ act: true }, 'name email act img role') ///  objj. especifican condiciones ei. activos , segundo parametro string nombre los campos q se muestran
         .skip(inicio)
         .limit(fin)
         .exec((err, users) => {
@@ -32,12 +32,12 @@ app.get('/user', verificaToken, function(req, res) {
                 });
             }
 
-            User.count({ estado: true /*  misma condicion que en find */ }, (err, conteo) => {
+            User.count({ act: true /*  misma condicion que en find */ }, (err, conteo) => {
 
                 res.json({
                     ok: true,
                     myUser: req.myUser,
-                    users,
+                    data: users,
                     cuantos: conteo
                 });
 
@@ -58,7 +58,7 @@ app.post('/user', [verificaToken, verificaAdmin_Role], function(req, res) {
         email: body.email,
         role: body.role || 'USER_ROLE',
         img: body.img || null,
-        estado: body.estado || true,
+        act: body.act || true,
         google: body.google || false,
         password: bcrypt.hashSync(body.password, 10),
     });
@@ -79,7 +79,7 @@ app.post('/user', [verificaToken, verificaAdmin_Role], function(req, res) {
         res.json({
             ok: true,
             myUser: req.myUser,
-            newUser: userDB
+            newData: userDB
         });
 
     });
@@ -92,7 +92,7 @@ app.post('/user', [verificaToken, verificaAdmin_Role], function(req, res) {
 app.put('/user/:id', [verificaToken, verificaAdmin_Role], function(req, res) {
 
     let id = req.params.id;
-    let body = _.pick(req.body, ['name', 'email', 'img', 'estado']);
+    let body = _.pick(req.body, ['name', 'email', 'img']);
     /* para filtrar la entrada de parametros podemos usar el underscore.pick que filtra el objeto
     o bien utilizar deletes: delete.body.password (elimina en caso de que existiera). */
 
@@ -118,7 +118,7 @@ app.put('/user/:id', [verificaToken, verificaAdmin_Role], function(req, res) {
         res.json({
             ok: true,
             myUser: req.myUser, // este es el usuario logeado
-            userUpdated: userDB // datos del usuario modificado
+            updatedData: userDB // datos del usuario modificado
 
             // TO-DO
             // actualmente hay un problema, si el usuario logeado modifica sus datos
@@ -179,7 +179,7 @@ app.delete('/user/kill/:id', [verificaToken, verificaAdmin_Role], function(req, 
 app.delete('/user/:id', [verificaToken, verificaAdmin_Role], function(req, res) {
 
     let id = req.params.id;
-    let body = _.pick(req.body, ['estado']);
+    let body = _.pick(req.body, ['act']);
     // para filtrar la entrada de parametros podemos usar el underscore.pick que filtra el objeto
     // o bien utilizar deletes: delete.body.password (elimina en caso de que existiera). 
 
@@ -194,7 +194,7 @@ app.delete('/user/:id', [verificaToken, verificaAdmin_Role], function(req, res) 
         }
 
 
-        if (!req.body.estado) {
+        if (!req.body.act) {
             return res.status(400).json({
                 ok: true,
                 err: {
@@ -207,8 +207,8 @@ app.delete('/user/:id', [verificaToken, verificaAdmin_Role], function(req, res) 
         res.json({
             ok: true,
             myUser: req.myUser,
-            changeTo: req.body.estado,
-            userChanged: userDB
+            changeTo: req.body.act,
+            updatedData: userDB
         });
 
 
