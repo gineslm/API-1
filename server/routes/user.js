@@ -1,19 +1,47 @@
 const express = require('express');
-
 const bcrypt = require('bcrypt');
-
 const _ = require('underscore');
-
 const User = require('../models/user');
-
 const app = express();
-
 const { verificaToken, verificaAdmin_Role } = require('../middleware/auth');
 
 
 //////////////////////////
 ///////// GET ////////////
 app.get('/user', verificaToken, function(req, res) {
+
+    let inicio = req.query.inicio || 0;
+    let fin = req.query.fin || 1000;
+    inicio = Number(inicio);
+    fin = Number(fin);
+
+    User.find({}, 'name email act img role') ///  objj. especifican condiciones ei. activos , segundo parametro string nombre los campos q se muestran
+        .skip(inicio)
+        .limit(fin)
+        .exec((err, users) => {
+
+            if (err) {
+                return res.status(400).json({
+                    ok: false,
+                    err
+                });
+            }
+
+            User.countDocuments({ act: true /*  misma condicion que en find */ }, (err, conteo) => {
+
+                res.json({
+                    ok: true,
+                    myUser: req.myUser,
+                    data: users,
+                    cuantos: conteo
+                });
+
+            });
+        });
+
+});
+
+app.get('/userAct', verificaToken, function(req, res) {
 
     let inicio = req.query.inicio || 0;
     let fin = req.query.fin || 1000;
@@ -32,7 +60,7 @@ app.get('/user', verificaToken, function(req, res) {
                 });
             }
 
-            User.count({ act: true /*  misma condicion que en find */ }, (err, conteo) => {
+            User.countDocuments({ act: true /*  misma condicion que en find */ }, (err, conteo) => {
 
                 res.json({
                     ok: true,
@@ -76,7 +104,7 @@ app.post('/user', [verificaToken, verificaAdmin_Role], function(req, res) {
         // opcion 1 = userDB.password = null; 
         // opcion 2 = funcion en el modelo user que elimina password en la conversion a JSON
 
-        res.json({
+        res.status(201).json({
             ok: true,
             myUser: req.myUser,
             newData: userDB
@@ -89,10 +117,11 @@ app.post('/user', [verificaToken, verificaAdmin_Role], function(req, res) {
 
 ////////////////////
 /////// PUT ////////
+
 app.put('/user/:id', [verificaToken, verificaAdmin_Role], function(req, res) {
 
     let id = req.params.id;
-    let body = _.pick(req.body, ['name', 'email', 'img']);
+    let body = _.pick(req.body, ['name', 'email', 'img', 'role', 'google']);
     /* para filtrar la entrada de parametros podemos usar el underscore.pick que filtra el objeto
     o bien utilizar deletes: delete.body.password (elimina en caso de que existiera). */
 
@@ -130,6 +159,7 @@ app.put('/user/:id', [verificaToken, verificaAdmin_Role], function(req, res) {
     });
 
 });
+
 
 
 
@@ -176,6 +206,8 @@ app.delete('/user/kill/:id', [verificaToken, verificaAdmin_Role], function(req, 
 ////////////////////
 /////// DELETE ////////
 
+
+
 app.delete('/user/:id', [verificaToken, verificaAdmin_Role], function(req, res) {
 
     let id = req.params.id;
@@ -203,6 +235,12 @@ app.delete('/user/:id', [verificaToken, verificaAdmin_Role], function(req, res) 
             });
         }
 
+        if (!usertDB) {
+            return res.status(400).json({
+                ok: false,
+                err: 'no existe usuario con ese ID'
+            });
+        }
 
         res.json({
             ok: true,

@@ -1,6 +1,7 @@
 require('./config/config');
 const mongoose = require('mongoose');
 const express = require('express');
+
 const cors = require('cors');
 const app = express();
 const bodyParser = require('body-parser');
@@ -31,6 +32,11 @@ mongoose.connect(process.env.URLDB, {
     }
 
 );
+
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
+mongoose.set('useUnifiedTopology', true);
 
 /////////////puerto/////////////////
 app.listen(process.env.PORT, () => {

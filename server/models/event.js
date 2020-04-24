@@ -8,6 +8,8 @@ let categoriasValidas = {
 
 
 let eventSchema = new Schema({
+
+
     act: {
         type: Boolean
     },
@@ -23,9 +25,13 @@ let eventSchema = new Schema({
     text: {
         type: String
     },
-    img: {
-        type: Array
+    tecnic: {
+        type: String
     },
+    image: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Image'
+    }],
     date: {
         type: String,
         required: [true, 'La descripcion es necesaria']
@@ -55,7 +61,6 @@ let eventSchema = new Schema({
 });
 
 
-// eliminamos la contraseña de la impresion en JSON del objeto
 eventSchema.methods.toJSON = function() {
     let event = this;
     let eventObject = event.toObject();

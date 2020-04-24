@@ -6,6 +6,11 @@ let Schema = mongoose.Schema;
 
 let contentSchema = new Schema({
 
+
+    act: {
+        type: Boolean,
+        default: true
+    },
     destino: {
         type: String,
         required: [true, 'El destino es necesario']
@@ -15,21 +20,26 @@ let contentSchema = new Schema({
         unique: true,
         required: [true, 'El area es necesaria']
     },
-    text: {
+    clase: {
         type: String
     },
-    clase: {
+    descripcion: {
+        type: String,
+    },
+    estilo: {
+        type: String,
+    },
+    text: {
         type: String
     },
     img: {
         type: String
     },
+    media: {
+        type: String
+    },
     link: {
         type: Array
-    },
-    act: {
-        type: Boolean,
-        default: true
     },
     autor: {
         type: String

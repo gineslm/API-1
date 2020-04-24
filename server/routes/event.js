@@ -1,7 +1,7 @@
 const express = require('express');
-const bcrypt = require('bcrypt');
 const _ = require('underscore');
 const Event = require('../models/event');
+const Image = require('../models/image');
 const app = express();
 const { verificaToken, verificaAdmin_Role } = require('../middleware/auth');
 
@@ -10,28 +10,30 @@ const { verificaToken, verificaAdmin_Role } = require('../middleware/auth');
 ////////////////////////////////////////////////////
 ///////// GET //////////////////////////////////////
 
-app.get('/event', verificaToken, function(req, res) {
+app.get('/event', function(req, res) {
 
     let inicio = req.query.inicio || 0;
     let fin = req.query.fin || 1000;
     inicio = Number(inicio);
     fin = Number(fin);
 
-    Event.find({ act: true }) ///  objj. especifican condiciones ei. activos , segundo parametro string nombre los campos q se muestran
+
+    Event.find({}) ///  objj. especifican condiciones ei. activos , segundo parametro string nombre los campos q se muestran
         .skip(inicio)
         .limit(fin)
+        .populate('image', 'folder name alt extension _id')
         .exec((err, events) => {
 
             if (err) {
-                return res.status(400).json({
+                return res.status(500).json({
                     ok: false,
                     err
                 });
             }
 
-            Event.count({ act: true /*  misma condicion que en find */ }, (err, conteo) => {
+            Event.countDocuments({ act: true /*  misma condicion que en find */ }, (err, conteo) => {
 
-                res.json({
+                res.status(200).json({
                     ok: true,
                     data: events,
                     cuantos: conteo
@@ -40,6 +42,9 @@ app.get('/event', verificaToken, function(req, res) {
             });
         });
 });
+
+
+
 
 
 
@@ -56,7 +61,8 @@ app.post('/event', [verificaToken, verificaAdmin_Role], function(req, res) {
         title: body.title,
         description: body.description,
         text: body.text,
-        img: body.img || [],
+        tecnic: body.tecnic,
+        image: body.image,
         date: body.date,
         place: body.place,
         location: body.location,
@@ -72,17 +78,20 @@ app.post('/event', [verificaToken, verificaAdmin_Role], function(req, res) {
     event.save((err, eventDB) => {
 
         if (err) {
+            return res.status(500).json({
+                ok: false,
+                err
+            });
+        }
+
+        if (!eventDB) {
             return res.status(400).json({
                 ok: false,
                 err
             });
         }
 
-        // eliminacion del password en el retorno
-        // opcion 1 = userDB.password = null; 
-        // opcion 2 = funcion en el modelo user que elimina password en la conversion a JSON
-
-        res.json({
+        res.status(201).json({
             ok: true,
             newData: eventDB
         });
@@ -99,7 +108,7 @@ app.put('/event/:id', [verificaToken, verificaAdmin_Role], function(req, res) {
 
     let id = req.params.id;
 
-    let body = _.pick(req.body, ['title', 'description', 'text', 'img', 'date', 'place', 'location', 'codigoplus', 'access', 'category', 'links', 'crew']);
+    let body = _.pick(req.body, ['title', 'description', 'text', 'tecnic', 'image', 'date', 'place', 'location', 'codigoplus', 'access', 'category', 'links', 'crew']);
 
     //let body = _.pick(req.body, ['act', 'title', 'description', 'texto', 'img', 'date', 'place', 'location', 'codigoPLus', 'access', 'category', 'links', 'crew']);
     /* para filtrar la entrada de parametros podemos usar el underscore.pick que filtra el objeto
@@ -109,7 +118,7 @@ app.put('/event/:id', [verificaToken, verificaAdmin_Role], function(req, res) {
 
 
         if (err) {
-            return res.status(400).json({
+            return res.status(500).json({
                 ok: false,
                 err
             });
@@ -124,7 +133,7 @@ app.put('/event/:id', [verificaToken, verificaAdmin_Role], function(req, res) {
 
 
 
-        res.json({
+        res.status(200).json({
             ok: true,
 
             updatedData: eventDB // datos del usuario modificado
@@ -150,7 +159,7 @@ app.delete('/event/:id', [verificaToken, verificaAdmin_Role], function(req, res)
 
 
         if (err) {
-            return res.status(400).json({
+            return res.status(500).json({
                 ok: false,
                 err
             });
@@ -167,7 +176,7 @@ app.delete('/event/:id', [verificaToken, verificaAdmin_Role], function(req, res)
         }
 
 
-        res.json({
+        res.status(200).json({
             ok: true,
             changeTo: req.body.act,
             updatedData: eventDB

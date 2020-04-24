@@ -4,6 +4,12 @@ let Schema = mongoose.Schema;
 
 
 let crewSchema = new Schema({
+
+
+    act: {
+        type: Boolean,
+        default: true
+    },
     name: {
         type: String,
         required: [true, 'El nombre es necesario']
@@ -17,21 +23,24 @@ let crewSchema = new Schema({
         unique: true,
         required: [true, 'El email es necesario']
     },
-    img: {
-        type: String
-    },
+    image: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Image'
+    }],
     date: {
         type: String
     },
-    act: {
-        type: Boolean,
-        default: true
-    },
     social: {
-        type: Array
+        type: Object,
+        properties: {
+            facebook: { type: String },
+            instagram: { type: String },
+            youtube: { type: String },
+            linkedin: { type: String }
+        }
     },
     roles: {
-        type: Array
+        type: String
     },
     links: {
         type: Array
