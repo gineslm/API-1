@@ -2,11 +2,15 @@ require('./config/config');
 const mongoose = require('mongoose');
 const express = require('express');
 
-const cors = require('cors');
+const cors = require('express-cors');
 const app = express();
 const bodyParser = require('body-parser');
 
-app.use(cors());
+app.use(cors({
+    allowedOrigins: [
+        'dsign.cloud'
+    ]
+}))
 
 
 // parse application/x-www-form-urlencoded

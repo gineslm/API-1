@@ -18,6 +18,7 @@
         "cors": "^2.8.5",
         "dir-parser": "^1.2.8",
         "express": "^4.17.1",
+        "express-cors": "0.0.3",
         "express-fileupload": "^1.1.7-alpha.1",
         "funclib": "^4.0.5",
         "jsonwebtoken": "^8.5.1",

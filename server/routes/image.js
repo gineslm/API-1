@@ -2,13 +2,12 @@ const express = require('express');
 const _ = require('underscore');
 const Image = require('../models/image');
 const fileUpload = require('express-fileupload');
-const cors = require('cors')
 const app = express();
 const { verificaToken, verificaAdmin_Role } = require('../middleware/auth');
 const fs = require('fs'); // filesistem -> utiliza en la eliminacion de archivos
 const path = require('path'); // trabajar con rutas  -> utiliza en la eliminacion de archivos
 
-app.use(cors());
+
 app.use(fileUpload());
 
 
