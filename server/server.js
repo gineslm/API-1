@@ -20,6 +20,12 @@ app.use(bodyParser.json());
 app.use(require('./routes/index'));
 
 
+
+
+
+
+
+
 //////////////CONNECT bbdd//////////////////
 
 mongoose.connect(process.env.URLDB, {
