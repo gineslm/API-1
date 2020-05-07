@@ -12,7 +12,7 @@ app.use(fileUpload());
 
 
 const maxSize = 7000000; /// tañaño maximo de archivos
-const pathFolder = path.resolve(__dirname, `../../`);
+const pathFolder = path.resolve(__dirname, `../../uploads`);
 
 
 
