@@ -7,6 +7,6 @@ app.use(require('./event'));
 app.use(require('./crew'));
 app.use(require('./content'));
 app.use(require('./image'));
-//app.use(require('./upload'));
+
 
 module.exports = app;

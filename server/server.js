@@ -14,6 +14,8 @@ app.use(function(req, res, next) {
     next();
 });
 
+///////////////acceso a la carpeta publica //////////////////
+app.use(express.static('uploads'));
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
