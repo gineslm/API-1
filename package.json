@@ -23,6 +23,6 @@
         "funclib": "^4.0.5",
         "jsonwebtoken": "^8.5.1",
         "mongoose": "^5.9.2",
-        "underscore": "^1.9.2"
+        "underscore": "^1.12.1"
     }
 }
