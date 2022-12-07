@@ -14,10 +14,10 @@
     "license": "ISC",
     "dependencies": {
         "bcrypt": "^4.0.0",
-        "body-parser": "^1.19.0",
+        "body-parser": "^1.20.1",
         "cors": "^2.8.5",
         "dir-parser": "^1.2.8",
-        "express": "^4.17.1",
+        "express": "^4.18.2",
         "express-cors": "0.0.3",
         "express-fileupload": "^1.1.7-alpha.1",
         "funclib": "^4.0.5",
